@@ -1,1 +1,237 @@
-<h1>Test</h1>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Heartbeat Love Explosion</title>
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      font-family: sans-serif;
+    }
+
+    .heart {
+      position: relative;
+      width: 100px;
+      height: 90px;
+      transform: scale(1);
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .heart::before,
+    .heart::after {
+      content: "";
+      position: absolute;
+      width: 100px;
+      height: 90px;
+      background: radial-gradient(circle at 30% 30%, #ff4d4d, #b30000);
+      border-radius: 50%;
+    }
+
+    .heart::before {
+      left: 0;
+      top: -45px;
+    }
+
+    .heart::after {
+      left: 45px;
+      top: 0;
+    }
+
+    .heart {
+      background: radial-gradient(circle at 30% 30%, #ff4d4d, #b30000);
+      transform: rotate(-45deg);
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
+    }
+
+    .explode {
+      animation: explode 0.5s forwards;
+    }
+
+    @keyframes explode {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(5);
+        opacity: 0;
+      }
+    }
+
+    .particles {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+    }
+
+    .particle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: #ff4d4d;
+      border-radius: 50%;
+      animation: pop 1s ease-out forwards;
+    }
+
+    @keyframes pop {
+      to {
+        transform: translate(calc(100px * (random() - 0.5)),
+            calc(100px * (random() - 0.5)));
+        opacity: 0;
+      }
+    }
+
+    .message {
+      position: absolute;
+      color: #fff;
+      font-size: 2em;
+      opacity: 0;
+      transform: scale(1);
+      transition: transform 0.4s ease, opacity 1s ease;
+      text-shadow: 0 0 10px #fff, 0 0 20px #ff4d4d;
+      pointer-events: none;
+    }
+
+    .message.show {
+      opacity: 1;
+    }
+
+
+
+
+    .tap-message {
+      position: absolute;
+      bottom: 50px;
+      font-size: 2em;
+      font-weight: bold;
+      text-align: center;
+      background: linear-gradient(270deg, #ff0080, #ff8c00, #40e0d0, #8a2be2, #ff0080);
+      background-size: 600% 600%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientFlow 4s ease infinite, blink 1s infinite alternate;
+      text-shadow: 0 0 10px #fff, 0 0 20px #ff4d4d;
+    }
+
+    @keyframes gradientFlow {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    @keyframes blink {
+      0% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0.6;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="heart" id="heart"></div>
+  <div class="particles" id="particles"></div>
+  <div class="tap-message">taptap aku sheyenkssss 💋</div>
+  <div class="message" id="message">Good morning everybody!!!!</div>
+
+  <script>
+    const heart = document.getElementById('heart');
+    const particlesContainer = document.getElementById('particles');
+    const message = document.getElementById('message');
+
+    let clickCount = 0;
+    let heartbeatInterval = null;
+
+    function beatHeart(speed = 300) {
+      heart.style.transition = `transform ${speed / 1000}s ease`;
+      heart.style.transform = 'scale(1.2) rotate(-45deg)';
+      setTimeout(() => {
+        heart.style.transform = 'scale(1) rotate(-45deg)';
+      }, speed);
+    }
+
+    function explodeHeart() {
+      exploded = true;
+      heart.classList.add('explode');
+      createParticles();
+
+      setTimeout(() => {
+        message.classList.add('show');
+        message.style.transform = 'scale(1)';
+
+        // Setelah muncul, mulai auto membesar
+        scaleInterval = setInterval(() => {
+          textScale += 0.05; // semakin besar perlahan
+          message.style.transform = `scale(${textScale})`;
+
+          // Batas maksimum biar gak kebangetan
+          if (textScale >= 6) {
+            clearInterval(scaleInterval);
+          }
+        }, 100); // setiap 100ms membesar
+      }, 500);
+    }
+
+    function createParticles() {
+      for (let i = 0; i < 40; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = '0px';
+        p.style.top = '0px';
+        p.style.background = `hsl(${Math.random() * 360}, 100%, 60%)`;
+        p.style.transform = `translate(${(Math.random() - 0.5) * 300}px, ${(Math.random() - 0.5) * 300}px)`;
+        particlesContainer.appendChild(p);
+
+        // Remove after animation
+        setTimeout(() => p.remove(), 1000);
+      }
+    }
+
+    let exploded = false;
+    let textScale = 1;
+    heart.addEventListener('click', () => {
+      if (exploded) {
+        // Setelah meledak, setiap tap bikin tulisan membesar
+        textScale += 0.3;
+        message.style.transform = `scale(${textScale})`;
+        return;
+      }
+
+      clickCount++;
+
+      if (clickCount >= 10) {
+        clearInterval(heartbeatInterval);
+        explodeHeart();
+        return;
+      }
+
+      beatHeart(300 - (clickCount * 20)); // Heartbeat gets faster
+    });
+  </script>
+
+</body>
+
+</html>
