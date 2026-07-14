@@ -1,237 +1,350 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <title>Heartbeat Love Explosion</title>
-  <style>
-    body {
-      margin: 0;
-      background: #111;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
-      font-family: sans-serif;
-    }
-
-    .heart {
-      position: relative;
-      width: 100px;
-      height: 90px;
-      transform: scale(1);
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-
-    .heart::before,
-    .heart::after {
-      content: "";
-      position: absolute;
-      width: 100px;
-      height: 90px;
-      background: radial-gradient(circle at 30% 30%, #ff4d4d, #b30000);
-      border-radius: 50%;
-    }
-
-    .heart::before {
-      left: 0;
-      top: -45px;
-    }
-
-    .heart::after {
-      left: 45px;
-      top: 0;
-    }
-
-    .heart {
-      background: radial-gradient(circle at 30% 30%, #ff4d4d, #b30000);
-      transform: rotate(-45deg);
-      box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
-    }
-
-    .explode {
-      animation: explode 0.5s forwards;
-    }
-
-    @keyframes explode {
-      0% {
-        transform: scale(1);
-        opacity: 1;
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VS Code Pets - Kucing Aktif Bergerak</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        height: 100vh;
+        background-color: #1e1e1e;
+        font-family: "Courier New", Courier, monospace;
+        position: relative;
+        cursor: crosshair;
       }
 
-      100% {
-        transform: scale(5);
-        opacity: 0;
-      }
-    }
-
-    .particles {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      pointer-events: none;
-      transform: translate(-50%, -50%);
-    }
-
-    .particle {
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      background: #ff4d4d;
-      border-radius: 50%;
-      animation: pop 1s ease-out forwards;
-    }
-
-    @keyframes pop {
-      to {
-        transform: translate(calc(100px * (random() - 0.5)),
-            calc(100px * (random() - 0.5)));
-        opacity: 0;
-      }
-    }
-
-    .message {
-      position: absolute;
-      color: #fff;
-      font-size: 2em;
-      opacity: 0;
-      transform: scale(1);
-      transition: transform 0.4s ease, opacity 1s ease;
-      text-shadow: 0 0 10px #fff, 0 0 20px #ff4d4d;
-      pointer-events: none;
-    }
-
-    .message.show {
-      opacity: 1;
-    }
-
-
-
-
-    .tap-message {
-      position: absolute;
-      bottom: 50px;
-      font-size: 2em;
-      font-weight: bold;
-      text-align: center;
-      background: linear-gradient(270deg, #ff0080, #ff8c00, #40e0d0, #8a2be2, #ff0080);
-      background-size: 600% 600%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: gradientFlow 4s ease infinite, blink 1s infinite alternate;
-      text-shadow: 0 0 10px #fff, 0 0 20px #ff4d4d;
-    }
-
-    @keyframes gradientFlow {
-      0% {
-        background-position: 0% 50%;
+      #petunjuk {
+        position: absolute;
+        top: 20px;
+        width: 100%;
+        text-align: center;
+        color: #858585;
+        font-size: 14px;
+        pointer-events: none;
+        user-select: none;
       }
 
-      50% {
-        background-position: 100% 50%;
+      #ground {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 80px;
+        border-top: 2px dashed #333;
+        background-color: #181818;
       }
 
-      100% {
-        background-position: 0% 50%;
+      .kucing-container {
+        position: absolute;
+        bottom: 60px;
+        left: 100px;
+        width: 120px; /* Diperlebar agar emoji ganda tidak terpotong */
+        height: 64px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: transform 0.15s ease-in-out;
+        transform-origin: center;
       }
-    }
 
-    @keyframes blink {
-      0% {
-        opacity: 1;
+      .kucing-sprite {
+        font-size: 48px;
+        user-select: none;
+        display: inline-block;
+        white-space: nowrap;
       }
 
-      100% {
-        opacity: 0.6;
+      /* --- ANIMASI BERDASARKAN AKTIVITAS --- */
+
+      /* Jalan Santai */
+      .jalan {
+        animation: animasiJalan 0.35s infinite alternate ease-in-out;
       }
-    }
-  </style>
-</head>
+      @keyframes animasiJalan {
+        0% {
+          transform: translateY(0) rotate(-6deg);
+        }
+        100% {
+          transform: translateY(-8px) rotate(6deg);
+        }
+      }
 
-<body>
+      /* Berlari Kencang (Mengejar Klik Mouse) */
+      .lari {
+        animation: animasiLari 0.18s infinite alternate ease-in-out;
+      }
+      @keyframes animasiLari {
+        0% {
+          transform: translateY(0) scaleX(1.1) scaleY(0.85);
+        }
+        100% {
+          transform: translateY(-12px) scaleX(0.85) scaleY(1.1);
+        }
+      }
 
-  <div class="heart" id="heart"></div>
-  <div class="particles" id="particles"></div>
-  <div class="tap-message">taptap aku sheyenkssss 💋</div>
-  <div class="message" id="message">Good morning everybody!!!!</div>
+      /* Diam / Mengendus / Penasaran / Nguap / Marah */
+      .diam,
+      .penasaran,
+      .nguap,
+      .marah,
+      .menjilat,
+      .duduk {
+        animation: animasiDiam 0.8s infinite alternate ease-in-out;
+      }
+      @keyframes animasiDiam {
+        0% {
+          transform: scaleY(1) scaleX(1);
+        }
+        100% {
+          transform: scaleY(0.9) scaleX(1.05);
+        }
+      }
 
-  <script>
-    const heart = document.getElementById('heart');
-    const particlesContainer = document.getElementById('particles');
-    const message = document.getElementById('message');
+      /* Istirahat Singkat / Tidur */
+      .tidur {
+        animation: animasiTidur 1.5s infinite alternate ease-in-out;
+      }
+      @keyframes animasiTidur {
+        0% {
+          transform: scale(0.95);
+          opacity: 0.9;
+        }
+        100% {
+          transform: scale(0.85);
+          opacity: 0.6;
+        }
+      }
 
-    let clickCount = 0;
-    let heartbeatInterval = null;
+      /* Bermain / Cinta (Melompat Kegirangan) */
+      .bermain,
+      .cinta {
+        animation: animasiBermain 0.4s infinite alternate ease-in-out;
+      }
+      @keyframes animasiBermain {
+        0% {
+          transform: translateY(0);
+        }
+        100% {
+          transform: translateY(-20px);
+        }
+      }
 
-    function beatHeart(speed = 300) {
-      heart.style.transition = `transform ${speed / 1000}s ease`;
-      heart.style.transform = 'scale(1.2) rotate(-45deg)';
-      setTimeout(() => {
-        heart.style.transform = 'scale(1) rotate(-45deg)';
-      }, speed);
-    }
+      /* Kaget */
+      .kaget {
+        animation: animasiKaget 0.1s infinite;
+      }
+      @keyframes animasiKaget {
+        0% {
+          transform: scale(1.2) translateX(-2px);
+        }
+        100% {
+          transform: scale(1.2) translateX(2px);
+        }
+      }
 
-    function explodeHeart() {
-      exploded = true;
-      heart.classList.add('explode');
-      createParticles();
+      /* Efek klik visual di lantai */
+      .click-target {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        background: rgba(255, 165, 0, 0.5);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        animation: targetFade 0.5s forwards;
+        pointer-events: none;
+      }
+      @keyframes targetFade {
+        0% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(3);
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="ground"></div>
 
-      setTimeout(() => {
-        message.classList.add('show');
-        message.style.transform = 'scale(1)';
+    <div class="kucing-container" id="kucingContainer">
+      <div class="kucing-sprite diam" id="kucingSprite">🐱</div>
+    </div>
 
-        // Setelah muncul, mulai auto membesar
-        scaleInterval = setInterval(() => {
-          textScale += 0.05; // semakin besar perlahan
-          message.style.transform = `scale(${textScale})`;
+    <script>
+      const container = document.getElementById("kucingContainer");
+      const sprite = document.getElementById("kucingSprite");
 
-          // Batas maksimum biar gak kebangetan
-          if (textScale >= 6) {
-            clearInterval(scaleInterval);
+      let currentX = 100;
+      let targetX = 100;
+      let speed = 2;
+      let state = "diam";
+      let facingRight = true;
+      let AIInterval;
+
+      function gantiState(statusBaru) {
+        state = statusBaru;
+        sprite.className = "kucing-sprite " + statusBaru;
+
+        switch (statusBaru) {
+          case "tidur":
+            sprite.innerHTML = "😴🐱";
+            break;
+          case "lari":
+            sprite.innerHTML = "🙀";
+            break;
+          case "jalan":
+            sprite.innerHTML = "🐈";
+            break;
+          case "diam":
+            sprite.innerHTML = "🐱";
+            break;
+          case "duduk":
+            sprite.innerHTML = "😺";
+            break;
+          case "menjilat":
+            sprite.innerHTML = "😽";
+            break;
+          case "bermain":
+            sprite.innerHTML = "😸";
+            break;
+          case "penasaran":
+            sprite.innerHTML = "🧐🐱";
+            break;
+          case "nguap":
+            sprite.innerHTML = "🥱🐱";
+            break;
+          case "marah":
+            sprite.innerHTML = "😾";
+            break;
+          case "cinta":
+            sprite.innerHTML = "😻💕";
+            break;
+          case "kaget":
+            sprite.innerHTML = "🙀";
+            break;
+          default:
+            sprite.innerHTML = "🐱";
+            break;
+        }
+      }
+
+      // --- SISTEM GERAKAN ACAK AKTIF dengan Variasi State Baru ---
+      function otakPetPetualang() {
+        if (state === "lari") return;
+
+        const keputusan = Math.random();
+
+        if (keputusan < 0.5) {
+          // 50% Peluang untuk berjalan ke lokasi acak baru
+          const jarakMaksimumJalan = 400;
+          const arahAcak = Math.random() < 0.5 ? -1 : 1;
+          const langkahAcak = Math.random() * jarakMaksimumJalan * arahAcak;
+
+          targetX = Math.max(
+            20,
+            Math.min(window.innerWidth - 130, currentX + langkahAcak),
+          );
+          speed = 2 + Math.random() * 1.5;
+          gantiState("jalan");
+        } else {
+          // 50% Peluang diam di tempat dengan berbagai ekspresi emosi acak
+          targetX = currentX;
+
+          const pilihanEmosi = Math.random();
+          if (pilihanEmosi < 0.15) {
+            gantiState("diam");
+          } else if (pilihanEmosi < 0.3) {
+            gantiState("tidur");
+          } else if (pilihanEmosi < 0.45) {
+            gantiState("duduk");
+          } else if (pilihanEmosi < 0.6) {
+            gantiState("menjilat");
+          } else if (pilihanEmosi < 0.7) {
+            gantiState("penasaran");
+          } else if (pilihanEmosi < 0.8) {
+            gantiState("nguap");
+          } else if (pilihanEmosi < 0.9) {
+            gantiState("marah");
+          } else {
+            gantiState("bermain");
           }
-        }, 100); // setiap 100ms membesar
-      }, 500);
-    }
-
-    function createParticles() {
-      for (let i = 0; i < 40; i++) {
-        const p = document.createElement('div');
-        p.className = 'particle';
-        p.style.left = '0px';
-        p.style.top = '0px';
-        p.style.background = `hsl(${Math.random() * 360}, 100%, 60%)`;
-        p.style.transform = `translate(${(Math.random() - 0.5) * 300}px, ${(Math.random() - 0.5) * 300}px)`;
-        particlesContainer.appendChild(p);
-
-        // Remove after animation
-        setTimeout(() => p.remove(), 1000);
-      }
-    }
-
-    let exploded = false;
-    let textScale = 1;
-    heart.addEventListener('click', () => {
-      if (exploded) {
-        // Setelah meledak, setiap tap bikin tulisan membesar
-        textScale += 0.3;
-        message.style.transform = `scale(${textScale})`;
-        return;
+        }
       }
 
-      clickCount++;
+      // Mesin Fisika Pergerakan Kucing
+      function loopFisika() {
+        const jarak = targetX - currentX;
 
-      if (clickCount >= 10) {
-        clearInterval(heartbeatInterval);
-        explodeHeart();
-        return;
+        if (Math.abs(jarak) > speed) {
+          // Membalikkan seluruh container ke kiri/kanan agar emoji ganda ikut berbalik dengan benar
+          if (jarak > 0 && !facingRight) {
+            facingRight = true;
+            container.style.transform = "scaleX(1)";
+          } else if (jarak < 0 && facingRight) {
+            facingRight = false;
+            container.style.transform = "scaleX(-1)";
+          }
+
+          currentX += Math.sign(jarak) * speed;
+          container.style.left = currentX + "px";
+        } else {
+          currentX = targetX;
+          container.style.left = currentX + "px";
+
+          if (state === "lari") {
+            // Ketika sampai di lokasi klik, beri respon emosi "cinta" atau "kaget" sebelum normal kembali
+            gantiState(Math.random() < 0.7 ? "cinta" : "kaget");
+            clearInterval(AIInterval);
+
+            setTimeout(() => {
+              gantiState("diam");
+              mulaiUlangAI();
+            }, 1500); // Tampilkan ekspresi selama 1,5 detik
+          } else if (state === "jalan") {
+            gantiState("diam");
+          }
+        }
+
+        requestAnimationFrame(loopFisika);
       }
 
-      beatHeart(300 - (clickCount * 20)); // Heartbeat gets faster
-    });
-  </script>
+      function mulaiUlangAI() {
+        clearInterval(AIInterval);
+        AIInterval = setInterval(otakPetPetualang, 3500);
+      }
 
-</body>
+      // Respons ketika Layar di-klik
+      document.addEventListener("click", (e) => {
+        const visualTarget = document.createElement("div");
+        visualTarget.classList.add("click-target");
+        visualTarget.style.left = e.clientX + "px";
+        visualTarget.style.top = window.innerHeight - 50 + "px";
+        document.body.appendChild(visualTarget);
+        setTimeout(() => visualTarget.remove(), 500);
 
+        targetX = Math.max(
+          20,
+          Math.min(window.innerWidth - 130, e.clientX - 60),
+        );
+        speed = 8;
+        gantiState("lari");
+      });
+
+      // Inisialisasi awal
+      loopFisika();
+      otakPetPetualang();
+      mulaiUlangAI();
+
+      window.addEventListener("resize", () => {
+        if (currentX > window.innerWidth) {
+          currentX = window.innerWidth - 140;
+          targetX = currentX;
+        }
+      });
+    </script>
+  </body>
 </html>
